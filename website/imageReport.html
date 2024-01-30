@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        #header {
+        text-align: center;
+        background: white;
+        font-size: 30px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        height: 80px;
+        width: 100%;
+
+    }
+    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
+    <script type="module">
+     
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
+        import { getStorage, ref as storageRef, listAll, getDownloadURL,getMetadata } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDteaOIQhTOOG_GoVruV69_cU3dzTRbALw",
+            authDomain: "iot-assignment-fd101.firebaseapp.com",
+            databaseURL: "https://iot-assignment-fd101-default-rtdb.firebaseio.com",
+            projectId: "iot-assignment-fd101",
+            storageBucket: "iot-assignment-fd101.appspot.com",
+            messagingSenderId: "19970132302",
+            appId: "1:19970132302:web:01c3bb61a993a9c32e361f"
+        };
+
+        const firebaseApp = initializeApp(firebaseConfig);
+        const storage = getStorage(firebaseApp);
+        const imagesRef = storageRef(storage, 'images/'); // Update the path to your images folder
+
+        // Function to fetch and display images
+        async function fetchAndDisplayImages() {
+            const imagesList = await listAll(imagesRef);
+            const reversedImagesList = imagesList.items.reverse();
+
+     
+            for (const imageRef of reversedImagesList) {
+                const imageUrl = await getDownloadURL(imageRef);
+
+                const metadata = await getMetadata(imageRef);
+
+        // Display the latest image
+                const latestImageUrl = await getDownloadURL(storageRef(storage, 'images/' + metadata.name));
+                const newRow = $("<tr>");
+           
+
+                // Add image name cell (using the image's name or any other identifier you have)
+                newRow.append("<th  scope='col'>" + imageRef.name + "</th>");
+
+                // Add image cell
+                newRow.append("<th scope='col'><img class='w-25' src='" + imageUrl + "' alt='" + imageRef.name + "'></th> ");
+             ;
+                // Append the new row to the table body
+                $("#imageTable").append(newRow);
+            }
+           
+        }
+
+           
+        
+        
+
+        // Call the function to fetch and display images
+        fetchAndDisplayImages();
+
+    </script>
+</head>
+<body>
+    <div id="header">
+
+        <a class="text-dark text-decoration-none" href="mainPage.html">
+          <h1 class="pt-3logo"><i class="fa-solid fa-leaf"></i> Tomato</h1>
+        </a>
+      </div>
+
+   <h2 class="text-center mt-5"> Image Report:</h2>
+    <table class="table table-sm table-dark w-75 m-auto  text-center" id="imageTable">
+     
+            <tr >
+                <th scope="col">Image Name</th>
+                <th scope="col">Image</th>
+            </tr>
+        
+    </table>
+</body>
+</html>
